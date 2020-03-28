@@ -17,7 +17,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Deploying....'
-                'docker build -t docker-nodejs-demo:trail-${BUILD_NUMBER} .'
+                sh 'docker build -t docker-nodejs-demo:trail-${BUILD_NUMBER} .'
             }
         }
     }
