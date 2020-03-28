@@ -6,7 +6,7 @@ pipeline {
         stage('Prepare') {
             agent {
                 docker {
-                    image 'node:7.4'
+                    image 'node:12'
                 }
             }
             
