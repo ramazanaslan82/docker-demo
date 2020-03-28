@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Prepare') {
+            steps {
+                echo 'Building..'
+                sh 'npm install'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing..'
+                sh 'npm test'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Deploying....'
+                'docker build -t docker-nodejs-demo:trail-${BUILD_NUMBER} .'
+            }
+        }
+    }
+}
