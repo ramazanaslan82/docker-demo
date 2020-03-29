@@ -13,7 +13,7 @@ pipeline {
 
         stage('Test') {
 
-            steps {
+            script {
                 echo "Performing npm build inside container..."
                 def appContainer = docker.image("node:${nodeVersion}")
                 appContainer.pull()
@@ -25,14 +25,15 @@ pipeline {
         }
 
         stage('Test with DB') {
-            def mysql = docker.image('mysql').run('-e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm ')
-            def appContainer = docker.image("node:${nodeVersion}")
-            appContainer.pull()
-            appContainer.inside("--link ${mysql.id}:mysql ") {
-              sh 'npm install --only=dev'
-              sh 'npm test'
+            script {
+                def mysql = docker.image('mysql').run('-e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm ')
+                def appContainer = docker.image("node:${nodeVersion}")
+                appContainer.pull()
+                appContainer.inside("--link ${mysql.id}:mysql ") {
+                  sh 'npm install --only=dev'
+                  sh 'npm test'
+                }
             }
-
         }
 
         stage('Build and Push') {
