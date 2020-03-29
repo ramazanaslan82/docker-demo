@@ -18,8 +18,9 @@ pipeline {
             }
             stages {
                 stage('Test') {
-                    echo "Performing npm build inside container..."
+
                     steps {
+                        echo "Performing npm build inside container..."
                         sh 'npm install --only=dev'
                         sh 'npm test'
                     }
