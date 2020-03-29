@@ -39,7 +39,9 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Deploying....'
-                sh 'docker build -t docker-nodejs-demo:trail-${BUILD_NUMBER} .'
+                sh 'docker build -t ramazanaslan/docker-nodejs-demo:trail-${BUILD_NUMBER} .'
+                sh 'docker push ramazanaslan/docker-nodejs-demo:trail-${BUILD_NUMBER}'
+
             }
         }
     }
