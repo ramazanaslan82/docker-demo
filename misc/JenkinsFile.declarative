@@ -9,7 +9,7 @@ pipeline {
                     image 'node:12'
                 }
             }
-            
+
             steps {
                 echo "Branch is ${env.BRANCH_NAME}..."
 
@@ -20,6 +20,7 @@ pipeline {
             }
 
         }
+
         stage('Test') {
             agent {
                 docker {
@@ -27,10 +28,13 @@ pipeline {
                 }
             }
 
-            withNPM(npmrcConfig:'npmconfig') {
-                echo "Performing npm test..."
-                sh 'npm test'
+            steps {
+                withNPM(npmrcConfig:'npmconfig') {
+                    echo "Performing npm test..."
+                    sh 'npm test'
+                }
             }
+
         }
         stage('Build') {
             steps {
