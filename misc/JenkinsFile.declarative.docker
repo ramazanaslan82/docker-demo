@@ -1,0 +1,60 @@
+pipeline {
+    agent any
+    
+    environment {
+        registry = "ramazanaslan/docker-nodejs-demo"
+        tagPrefix = "trial"
+        nodeVersion = "12"
+        registryCredential = '65da7bb2-ba6f-44bb-8dcc-249875b229c9'
+        dockerImage = ''
+    }
+
+    stages {
+
+        stage('Test') {
+            agent {
+                docker {
+                    image 'node:${nodeVersion}'
+                }
+            }
+
+            steps {
+                echo "Performing npm build inside container..."
+                docker.inside({
+                    sh 'npm install --only=dev'
+                    sh 'npm test'
+                })
+            }
+        }
+
+        stage('Test with DB') {
+            def mysql = docker.image('mysql').run('-e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm ')
+            def appContainer = docker.image("${nodeVersion}")
+            appContainer.pull()
+            appContainer.inside("--link ${mysql.id}:mysql ") {
+              sh 'npm install --only=dev'
+              sh 'npm test'
+            }
+
+        }
+
+        stage('Build and Push') {
+            steps {
+
+                echo 'Building....'
+                script {
+                  dockerImage = docker.build registry + ":${tagPrefix}-${BUILD_NUMBER}"
+                }
+
+                echo 'Pushing....'
+                script {
+                  docker.withRegistry( '', registryCredential ) {
+                    dockerImage.push()
+                  }
+                }
+
+            }
+        }
+
+    }
+}
