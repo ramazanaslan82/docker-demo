@@ -1,5 +1,12 @@
 pipeline {
     agent any
+    
+    environment {
+        registry = "ramazanaslan/docker-nodejs-demo"
+        tagPrefix = "trial-"
+        registryCredential = '65da7bb2-ba6f-44bb-8dcc-249875b229c9'
+        dockerImage = ''
+    }
 
     stages {
 
@@ -38,10 +45,19 @@ pipeline {
         }
         stage('Build') {
             steps {
+
                 echo 'Building....'
-                sh 'docker build -t ramazanaslan/docker-nodejs-demo:trail-${BUILD_NUMBER} .'
+                script {
+                  dockerImage = docker.build registry + ":${tagPrefix}-${BUILD_NUMBER}"
+                }
+
                 echo 'Pushing....'
-                sh 'docker push ramazanaslan/docker-nodejs-demo:trail-${BUILD_NUMBER}'
+                script {
+                  docker.withRegistry( '', registryCredential ) {
+                    dockerImage.push()
+                  }
+                }
+
             }
         }
     }
