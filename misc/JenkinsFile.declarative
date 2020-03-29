@@ -21,8 +21,8 @@ pipeline {
 
         }
         stage('Test') {
-            steps {
-                echo 'Testing..'
+            withNPM(npmrcConfig:'npmconfig') {
+                echo "Performing npm test..."
                 sh 'npm test'
             }
         }
