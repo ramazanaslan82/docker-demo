@@ -12,24 +12,21 @@ pipeline {
     stages {
 
         stage('Test') {
-            agent {
-                docker {
-                    image 'node:${nodeVersion}'
-                }
-            }
 
             steps {
                 echo "Performing npm build inside container..."
-                docker.inside({
+                def appContainer = docker.image("node:${nodeVersion}")
+                appContainer.pull()
+                appContainer.inside {
                     sh 'npm install --only=dev'
                     sh 'npm test'
-                })
+                }
             }
         }
 
         stage('Test with DB') {
             def mysql = docker.image('mysql').run('-e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm ')
-            def appContainer = docker.image("${nodeVersion}")
+            def appContainer = docker.image("node:${nodeVersion}")
             appContainer.pull()
             appContainer.inside("--link ${mysql.id}:mysql ") {
               sh 'npm install --only=dev'
