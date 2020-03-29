@@ -13,15 +13,19 @@ pipeline {
 
         stage('Test') {
 
-            script {
-                echo "Performing npm build inside container..."
-                def appContainer = docker.image("node:${nodeVersion}")
-                appContainer.pull()
-                appContainer.inside {
-                    sh 'npm install --only=dev'
-                    sh 'npm test'
+            agent {
+                docker { image 'node:${nodeVersion}' }
+            }
+            stages {
+                stage('Test') {
+                    echo "Performing npm build inside container..."
+                    steps {
+                        sh 'npm install --only=dev'
+                        sh 'npm test'
+                    }
                 }
             }
+
         }
 
         stage('Test with DB') {
