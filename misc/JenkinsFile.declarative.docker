@@ -16,15 +16,11 @@ pipeline {
             agent {
                 docker { image 'node:${nodeVersion}' }
             }
-            stages {
-                stage('Test') {
 
-                    steps {
-                        echo "Performing npm build inside container..."
-                        sh 'npm install --only=dev'
-                        sh 'npm test'
-                    }
-                }
+            steps {
+                echo "Performing npm build inside container..."
+                sh 'npm install --only=dev'
+                sh 'npm test'
             }
 
         }
