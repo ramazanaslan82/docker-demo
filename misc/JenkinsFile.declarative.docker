@@ -63,4 +63,12 @@ pipeline {
         }
 
     }
+    
+    post {
+        failure {
+            mail to: '8a4b53e342b5d2@mailtrap.io',
+                 subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+                 body: "Something is wrong with ${env.BUILD_URL}"
+        }
+    }
 }
