@@ -65,6 +65,13 @@ pipeline {
     }
     
     post {
+    
+        success {
+            mail to: '8a4b53e342b5d2@mailtrap.io',
+                 subject: "Succeeded Pipeline: ${currentBuild.fullDisplayName}",
+                 body: "Everything fine with ${env.BUILD_URL}"
+        }
+
         failure {
             mail to: '8a4b53e342b5d2@mailtrap.io',
                  subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
